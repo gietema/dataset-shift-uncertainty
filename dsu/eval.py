@@ -9,6 +9,7 @@ poetry run python dsu/eval.py \
 --output-path ./results \
 --cifar-c-dir ~/Downloads/CIFAR-10-C
 """
+from functools import partial
 from pathlib import Path
 from typing import Tuple, Union, Dict, List, Callable
 
@@ -33,6 +34,7 @@ sns.set_style("whitegrid")
 @click.option("--output-path", type=click.STRING)
 def main(model_path: str, ensemble_path: Tuple[str], cifar_c_dir: str, output_path: str):
     (train_images, _), (test_images, test_labels) = tf.keras.datasets.cifar10.load_data()
+    preprocess = partial(preprocess_images, train_main=np.mean(train_images, axis=0))
     print("Loading models..")
     models = get_models(ensemble_path, model_path)
 
@@ -42,7 +44,7 @@ def main(model_path: str, ensemble_path: Tuple[str], cifar_c_dir: str, output_pa
 
     # get level 0, baseline results without corruptions
     for model_name, model_fn in models.items():
-        preds = model_fn(preprocess_images(test_images))
+        preds = model_fn(preprocess(test_images))
         probs = tf.nn.softmax(preds, axis=1)
         acc.update_state(test_labels.flatten(), np.argmax(preds, axis=1))
         ece.add_batch(probs, label=test_labels)
@@ -64,7 +66,7 @@ def main(model_path: str, ensemble_path: Tuple[str], cifar_c_dir: str, output_pa
         imgs = np.load(str(corruption))
         for severity in tqdm(range(0, 5), total=5, position=1):
             for model_name, model_fn in models.items():
-                imgs_level = preprocess_images(imgs[severity * 10000: (severity + 1) * 10000])
+                imgs_level = preprocess(imgs[severity * 10000: (severity + 1) * 10000])
                 preds = model_fn(imgs_level)
                 probs = tf.nn.softmax(preds, axis=1)
                 acc.update_state(test_labels.flatten(), np.argmax(preds, axis=1))
@@ -109,8 +111,8 @@ def boxplot(df: pd.DataFrame, metric: str) -> Figure:
     return fig
 
 
-def preprocess_images(imgs: np.ndarray) -> np.ndarray:
-    imgs = tf.keras.applications.resnet.preprocess_input(imgs)
+def preprocess_images(imgs: np.ndarray, train_mean: np.ndarray) -> np.ndarray:
+    imgs = imgs - train_mean
     imgs = imgs / 255.0
     return imgs
 
