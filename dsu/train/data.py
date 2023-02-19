@@ -24,7 +24,6 @@ class Datasets:
 
 def get_data(cfg: Config) -> Tuple[Datasets, StepConfig]:
     (train_images, train_labels), (test_images, test_labels) = tf.keras.datasets.cifar10.load_data()
-    train_images, train_labels = shuffle(train_images, train_labels)
 
     train_mean = np.mean(train_images, axis=0)
     train_images = train_images - train_mean
