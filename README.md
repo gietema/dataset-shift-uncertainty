@@ -59,4 +59,5 @@ poetry run python dsu/eval.py \
 ## Results
 ![accuracy](results/accuracy.png)
 ![Expected calibration error](results/ece.png)
+
 Accuracy is somewhat higher than reported in the paper, but ECE is also higher.
