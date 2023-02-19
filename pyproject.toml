@@ -1,0 +1,55 @@
+[tool.poetry]
+name = "dataset-shift-uncertainty"
+version = "0.1.0"
+description = ""
+authors = ["Jochem Gietema"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.11"
+pandas = "^1.5.3"
+tensorflow-probability = "0.17.0"
+seaborn = "^0.12.2"
+wandb = "^0.13.9"
+dacite = "^1.8.0"
+tensorflow-addons = "^0.19.0"
+ipdb = "^0.13.11"
+black = "^23.1.0"
+tqdm = "^4.64.1"
+tensorflow-datasets = "^4.8.2"
+robustness-metrics = {git = "https://github.com/google-research/robustness_metrics.git"}
+
+[tool.poetry.group.tensorflow]
+optional = true
+
+[tool.poetry.group.tensorflow.dependencies]
+tensorflow = "2.9.0"
+
+[tool.poetry.group.tensorflow-m1]
+optional = true
+
+[tool.poetry.group.tensorflow-m1.dependencies]
+tensorflow-macos = "2.9.0"
+tensorflow-metal = "0.5.0"
+
+[tool.poetry.group.dev.dependencies]
+jupyter = "^1.0.0"
+black = "^23.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.black]
+line-length = 120
+include = "\\.pyi?$"
+exclude = """
+/(
+    \\.git
+  | \\.tox
+  | \\.venv
+  | notebooks
+  | reports
+)/
+"""
