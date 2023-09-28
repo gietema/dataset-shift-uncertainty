@@ -27,7 +27,7 @@ to install `tensorflow-macos` and `tensorflow-metal`.
 ## Training
 To train the ResNet on CIFAR-10, run:
 ```commandline
-poetry run python dsu/train/main.py --cfg-file ca/train/config/0.json
+poetry run python dsu/train/main.py --cfg-file dsu/train/config/0.json
 ```
 The default configuration leads to a test accuracy of about 90%.
 The training can use Weights and Biases (`wandb`) for tracking the training runs.
